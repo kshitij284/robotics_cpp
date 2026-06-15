@@ -22,6 +22,9 @@ FetchContent_Declare(
 set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
+enable_testing()
+include(GoogleTest)
+
 FetchContent_Declare(
 	Eigen
 	GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
@@ -30,4 +33,9 @@ FetchContent_Declare(
 )
 set(EIGEN_BUILD_DOC OFF CACHE BOOL "" FORCE)
 set(EIGEN_BUILD_TESTING OFF CACHE BOOL "" FORCE)
+set(EIGEN_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(BUILD_TESTING       OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(Eigen)
+
+add_subdirectory(src/components)
+add_subdirectory(tests/components)
