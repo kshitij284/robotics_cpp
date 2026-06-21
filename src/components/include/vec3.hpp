@@ -3,6 +3,7 @@
 #include "constants.hpp"
 #include <cassert>
 #include <cmath>
+#include <limits>
 #include <ostream>
 
 namespace kinematics::math {
@@ -24,6 +25,20 @@ public:
   bool operator==(const Vec3 &other) const noexcept {
     return std::abs(x - other.x) < kEpsilon &&
            std::abs(y - other.y) < kEpsilon && std::abs(z - other.z) < kEpsilon;
+  }
+
+  double operator[](size_t i) const noexcept {
+    assert(i < 3 && "Vec3::subscript operator - Out of bound ");
+    switch (i) {
+    case 0:
+      return x;
+    case 1:
+      return y;
+    case 2:
+      return z;
+    default:
+      return std::numeric_limits<double>::quiet_NaN();
+    }
   }
 
   Vec3 &operator+=(const Vec3 &other) noexcept {
@@ -95,6 +110,8 @@ public:
     assert((n > kEpsilon) && "Vec3::normalize - zero-length vector");
     return *this / n;
   }
+
+  bool is_unit() const noexcept { return std::abs(norm() - 1.0) < kEpsilon; }
 
   double dot(const Vec3 &other) const noexcept {
     return (x * other.x) + (y * other.y) + (z * other.z);

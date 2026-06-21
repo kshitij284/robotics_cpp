@@ -13,3 +13,9 @@ TEST(VecTest, Equality) {
 
   EXPECT_FALSE(a == c);
 }
+
+TEST(VecTest, SubscriptAndDot) {
+  Vec3 a{1.0, 2.0, 3.0};
+  EXPECT_DOUBLE_EQ(a[0], 1.0);
+  EXPECT_DOUBLE_EQ(a.x, 1.0);
+}
