@@ -18,12 +18,12 @@ public:
            (std::abs(y - other.y) < kEpsilon);
   };
 
-  constexpr double &operator[](size_t i) noexcept {
+  constexpr double &operator[](std::size_t i) noexcept {
     assert(i < 2 && "Vec2::subscript - Out of bound access");
     return (i == 0) ? x : y;
   }
 
-  constexpr double operator[](size_t i) const noexcept {
+  constexpr double operator[](std::size_t i) const noexcept {
     assert(i < 2 && "Vec2::subscript - Out of bound access");
     return (i == 0) ? x : y;
   }
