@@ -29,13 +29,12 @@ public:
 
   constexpr double &operator[](size_t i) noexcept {
     assert(i < 3 && "Vec3::subscript operator - Out of bound access");
-    return *(&x + i); // for strict compliance replace with -
-                      // return (i == 0) ? x : ( i == 1) ? y : z
+    return (i == 0) ? x : (i == 1) ? y : z;
   }
 
   constexpr double operator[](size_t i) const noexcept {
     assert(i < 3 && "Vec3::subscript operator - Out of bound ");
-    return *(&x + i);
+    return (i == 0) ? x : (i == 1) ? y : z;
   }
 
   constexpr Vec3 &operator+=(const Vec3 &other) noexcept {
@@ -89,9 +88,7 @@ public:
     return *this;
   }
 
-  // assert here is debug guard
   constexpr Vec3 operator/(double d) const noexcept {
-    assert((std::abs(d) > kEpsilon) && "Vec3::operator/ - division by zero");
     Vec3 tmp = *this;
     tmp /= d;
     return tmp;
