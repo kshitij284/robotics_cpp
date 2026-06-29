@@ -1,5 +1,6 @@
 add_executable(test_components
-	test_vec3.cpp)
+	test_quaternion.cpp
+)
 
 target_link_libraries(test_components
 	PRIVATE

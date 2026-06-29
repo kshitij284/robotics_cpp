@@ -219,4 +219,8 @@ public:
   }
 };
 
+inline constexpr Quaternion operator*(double factor, Quaternion q) noexcept {
+  return q * factor;
+}
+
 } // namespace kinematics::math
