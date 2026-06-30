@@ -1,5 +1,5 @@
 add_executable(test_components
-	test_quaternion.cpp
+	test_mat3.cpp
 )
 
 target_link_libraries(test_components
