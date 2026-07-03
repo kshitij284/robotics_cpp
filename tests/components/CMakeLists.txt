@@ -1,5 +1,5 @@
 add_executable(test_components
-	test_mat3.cpp
+	test_se3.cpp
 )
 
 target_link_libraries(test_components

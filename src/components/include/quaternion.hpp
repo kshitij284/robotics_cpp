@@ -1,7 +1,7 @@
 #pragma once
 
 #include "constants.hpp"
-#include "ub_mat3.hpp"
+#include "mat3.hpp"
 #include "vec3.hpp"
 #include <cassert>
 #include <cmath>
