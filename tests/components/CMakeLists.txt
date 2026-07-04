@@ -1,5 +1,7 @@
 add_executable(test_components
-	test_se3.cpp
+	math_test/test_mat3.cpp
+	math_test/test_quaternion.cpp
+	math_test/test_se3.cpp
 )
 
 target_link_libraries(test_components
