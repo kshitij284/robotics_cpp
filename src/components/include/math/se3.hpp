@@ -11,7 +11,7 @@ namespace kinematics::math {
 
 class SE3 {
   Mat3 R_ = Mat3::identity();
-  Vec3 t_;
+  Vec3 t_{0.0, 0.0, 0.0};
 
 public:
   constexpr SE3() = default;
