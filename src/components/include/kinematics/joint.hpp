@@ -40,6 +40,22 @@ public:
   constexpr Joint(Joint &&other) noexcept = default;
   constexpr Joint &operator=(Joint &&other) noexcept = default;
 
+  [[nodiscard]] constexpr const std::string &name() const noexcept {
+    return name_;
+  };
+  [[nodiscard]] constexpr const JointType &type() const noexcept {
+    return type_;
+  };
+  [[nodiscard]] constexpr const SE3 &rest_transform() const noexcept {
+    return rest_transform_;
+  };
+  [[nodiscard]] constexpr const double &min_q() const noexcept {
+    return min_q_;
+  };
+  [[nodiscard]] constexpr const double &max_q() const noexcept {
+    return max_q_;
+  };
+
   SE3 transform(double q) const {
     SE3 result = std::visit(
         [&](auto &&joint_type) -> SE3 {
