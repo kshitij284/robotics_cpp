@@ -12,6 +12,9 @@ namespace kinematics::math {
 
 struct Revolute {
   Vec3 axis;
+  Revolute(Vec3 axis_in) : axis(axis_in) {
+    assert(axis.is_unit() && "Revolute: Axis must be unit vector");
+  }
 };
 struct Prismatic {
   Vec3 axis;
@@ -25,8 +28,10 @@ private:
   std::string name_ = "joint";
   JointType type_ = Fixed{};
   SE3 rest_transform_ = SE3::identity();
-  double min_q_ = -kPi;
-  double max_q_ = kPi;
+  // default limits are 0.0, 0.0. Callers constructing Revolute/Prismatic must
+  // provide explicit limits
+  double min_q_ = 0.0;
+  double max_q_ = 0.0;
 
 public:
   constexpr Joint() = default;
@@ -49,14 +54,11 @@ public:
   [[nodiscard]] constexpr const SE3 &rest_transform() const noexcept {
     return rest_transform_;
   };
-  [[nodiscard]] constexpr const double &min_q() const noexcept {
-    return min_q_;
-  };
-  [[nodiscard]] constexpr const double &max_q() const noexcept {
-    return max_q_;
-  };
+  [[nodiscard]] constexpr double min_q() const noexcept { return min_q_; };
+  [[nodiscard]] constexpr double max_q() const noexcept { return max_q_; };
 
   SE3 transform(double q) const {
+    q = std::clamp(q, min_q_, max_q_);
     SE3 result = std::visit(
         [&](auto &&joint_type) -> SE3 {
           using T = std::decay_t<decltype(joint_type)>;
