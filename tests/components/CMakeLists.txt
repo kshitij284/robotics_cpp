@@ -1,4 +1,5 @@
 add_executable(test_components
+	math_test/test_vec3.cpp
 	math_test/test_mat3.cpp
 	math_test/test_quaternion.cpp
 	math_test/test_se3.cpp
