@@ -16,9 +16,11 @@ protected:
   std::vector<Joint> vec_fix_joint;
   std::vector<Joint> vec_rev_joint;
   std::vector<Joint> vec_pris_joint;
+  std::vector<Joint> vec_mixed_joint;
   KinematicChain fixed_chain;
   KinematicChain revolute_chain;
   KinematicChain prismatic_chain;
+  KinematicChain mixed_chain;
 
   KinematicChainTest()
       : axis_x(Vec3{1.0, 0.0, 0.0}), axis_y(Vec3{0.0, 1.0, 0.0}),
@@ -36,8 +38,10 @@ protected:
             std::vector<Joint>{revolute_joint, revolute_joint, revolute_joint}),
         vec_pris_joint(std::vector<Joint>{prismatic_joint, prismatic_joint,
                                           prismatic_joint}),
+        vec_mixed_joint(
+            std::vector<Joint>{revolute_joint, fixed_joint, prismatic_joint}),
         fixed_chain(vec_fix_joint), revolute_chain(vec_rev_joint),
-        prismatic_chain(vec_pris_joint) {}
+        prismatic_chain(vec_pris_joint), mixed_chain(vec_mixed_joint) {}
 };
 
 TEST_F(KinematicChainTest, JointCount_ReturnCorrectValues) {
@@ -91,22 +95,30 @@ TEST_F(KinematicChainTest, ForwardKinematics_FixedChain_AssertionThrown) {
 }
 
 TEST_F(KinematicChainTest, ForwardKinematics_Revolut_ComposesCorrectly) {
-  Mat3 result_rot_q0 =
-      (Quaternion::from_axis_angle(axis_x, -kPi / 2)).to_rotation_matrix();
   Mat3 result_rot_q90 =
+      (Quaternion::from_axis_angle(axis_x, -kPi / 2)).to_rotation_matrix();
+  Mat3 result_rot_q0 =
       (Quaternion::from_axis_angle(axis_x, 0.0)).to_rotation_matrix();
   EXPECT_EQ(
       revolute_chain.forward_kinematics(std::vector<double>{0.0, 0.0, 0.0}),
-      SE3(result_rot_q0, Vec3{0.0, 0.0, 5.0}));
+      SE3(result_rot_q90, Vec3{0.0, 0.0, 5.0}));
   EXPECT_EQ(revolute_chain.forward_kinematics(
                 std::vector<double>{kPi / 2, kPi / 2, kPi / 2}),
-            SE3(result_rot_q90, Vec3{-5.0, 5.0, -5.0}));
+            SE3(result_rot_q0, Vec3{-5.0, 5.0, -5.0}));
 }
 
-TEST_F(KinematicChainTest, ForwardKinematics_ComposesCorrectly) {
-  Mat3 result_rot_q0 =
+TEST_F(KinematicChainTest, ForwardKinematics_Prismatic_ComposesCorrectly) {
+  Mat3 result_rot_q90 =
       (Quaternion::from_axis_angle(axis_x, -kPi / 2)).to_rotation_matrix();
   EXPECT_EQ(
       prismatic_chain.forward_kinematics(std::vector<double>{-5.0, 2.0, -3.0}),
-      SE3(result_rot_q0, Vec3{0.0, 2.0, 3.0}));
+      SE3(result_rot_q90, Vec3{0.0, 2.0, 3.0}));
+}
+
+TEST_F(KinematicChainTest, ForwardKinematics_MixedJoints_ValuesCorrectlyApply) {
+  Mat3 result_mixed =
+      (Quaternion::from_axis_angle(axis_x, -kPi / 2).to_rotation_matrix()) *
+      (Quaternion::from_axis_angle(axis_z, -kPi / 2).to_rotation_matrix());
+  EXPECT_EQ(mixed_chain.forward_kinematics(std::vector<double>{kPi / 2, 2.0}),
+            SE3(result_mixed, Vec3{-5.0, 2.0, 0.0}));
 }

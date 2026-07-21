@@ -90,8 +90,19 @@ TEST_F(JointTest, Transform_Revolute_qBoundaries_ComposesCorrectly) {
                     Quaternion::from_axis_angle(axis_z, kPi), vec_zero));
 }
 
+TEST_F(JointTest, Transform_Revolute_qOutOfLimit_ClampCorrectly) {
+  EXPECT_EQ(revolute_joint.transform(-kPi * 2),
+            rest_transform_rot_translation *
+                SE3::from_quaternion_translation(
+                    Quaternion::from_axis_angle(axis_z, -kPi), vec_zero));
+  EXPECT_EQ(revolute_joint.transform(kPi * 2),
+            rest_transform_rot_translation *
+                SE3::from_quaternion_translation(
+                    Quaternion::from_axis_angle(axis_z, kPi), vec_zero));
+}
+
 TEST_F(JointTest, Transform_Prismatic_qZero_ReturnsSelf) {
-  EXPECT_EQ(revolute_joint.transform(0.0), rest_transform_rot_translation);
+  EXPECT_EQ(prismatic_joint.transform(0.0), rest_transform_rot_translation);
 }
 
 TEST_F(JointTest, Transform_Prismatic_ComposesBeforeMotions) {
@@ -107,5 +118,12 @@ TEST_F(JointTest, Transform_Prismatic_qBoundaries_ComposesCorrectly) {
   EXPECT_EQ(prismatic_joint.transform(-5.0),
             rest_transform_rot_translation * SE3(Vec3{0.0, -5.0, 0.0}));
   EXPECT_EQ(prismatic_joint.transform(5.0),
+            rest_transform_rot_translation * SE3(Vec3{0.0, 5.0, 0.0}));
+}
+
+TEST_F(JointTest, Transform_Prismatic_qOutOfLimits_ComposesCorrectly) {
+  EXPECT_EQ(prismatic_joint.transform(-10.0),
+            rest_transform_rot_translation * SE3(Vec3{0.0, -5.0, 0.0}));
+  EXPECT_EQ(prismatic_joint.transform(10.0),
             rest_transform_rot_translation * SE3(Vec3{0.0, 5.0, 0.0}));
 }

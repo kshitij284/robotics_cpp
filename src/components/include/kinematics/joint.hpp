@@ -58,6 +58,7 @@ public:
   [[nodiscard]] constexpr double max_q() const noexcept { return max_q_; };
 
   SE3 transform(double q) const {
+    // values are clamped to limits before transform is applied
     q = std::clamp(q, min_q_, max_q_);
     SE3 result = std::visit(
         [&](auto &&joint_type) -> SE3 {
