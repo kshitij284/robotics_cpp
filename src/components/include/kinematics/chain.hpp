@@ -1,6 +1,7 @@
 #pragma once
 
 #include "kinematics/joint.hpp"
+#include <cassert>
 #include <span>
 #include <vector>
 

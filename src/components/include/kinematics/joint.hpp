@@ -5,7 +5,9 @@
 #include "math/quaternion.hpp"
 #include "math/se3.hpp"
 #include "math/vec3.hpp"
+#include <algorithm>
 #include <ostream>
+#include <string>
 #include <variant>
 
 namespace kinematics::math {

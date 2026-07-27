@@ -63,7 +63,7 @@ TEST_F(KinematicChainTest, DefaultInitialization_StoresCorrectValues) {
   EXPECT_EQ(default_chain.dof_count(), 0);
 }
 
-TEST_F(KinematicChainTest, ParameteriedInitialization_StoresCorrectValues) {
+TEST_F(KinematicChainTest, ParameterizedInitialization_StoresCorrectValues) {
   EXPECT_EQ(revolute_chain.joint_count(), 3);
   EXPECT_EQ(revolute_chain.dof_count(), 3);
   EXPECT_EQ(prismatic_chain.joint_count(), 3);
@@ -82,19 +82,19 @@ TEST_F(KinematicChainTest, AddJoint_StoresCorrectValues) {
   }
 }
 
-TEST_F(KinematicChainTest, ForwardKinematics_EmptyChain_AssertionThrown) {
+TEST_F(KinematicChainTest, ForwardKinematics_EmptyChain_AssertionAborts) {
   EXPECT_DEATH(
       default_chain.forward_kinematics(std::vector<double>{2.0, 4.0, 5.0}),
       "KinematicChain: q count must match DOF");
 }
 
-TEST_F(KinematicChainTest, ForwardKinematics_FixedChain_AssertionThrown) {
+TEST_F(KinematicChainTest, ForwardKinematics_FixedChain_AssertionAborts) {
   EXPECT_DEATH(
       fixed_chain.forward_kinematics(std::vector<double>{5.0, 7.0, 1.0}),
       "KinematicChain: q count must match DOF");
 }
 
-TEST_F(KinematicChainTest, ForwardKinematics_Revolut_ComposesCorrectly) {
+TEST_F(KinematicChainTest, ForwardKinematics_Revolute_ComposesCorrectly) {
   Mat3 result_rot_q90 =
       (Quaternion::from_axis_angle(axis_x, -kPi / 2)).to_rotation_matrix();
   Mat3 result_rot_q0 =
