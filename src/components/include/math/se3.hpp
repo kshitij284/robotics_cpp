@@ -2,6 +2,7 @@
 
 #include "constants.hpp"
 #include "mat3.hpp"
+#include "quaternion.hpp"
 #include "vec3.hpp"
 #include <cassert>
 #include <cmath>

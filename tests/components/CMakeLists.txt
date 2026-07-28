@@ -5,6 +5,7 @@ add_executable(test_components
 	math_test/test_se3.cpp
 	kinematics_test/test_joint.cpp
 	kinematics_test/test_chain.cpp
+	kinematics_test/test_jacobian.cpp
 )
 
 target_link_libraries(test_components
