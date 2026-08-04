@@ -67,6 +67,14 @@ public:
 
   constexpr void add_joint(Joint joint) { chain_.push_back(std::move(joint)); }
 
+  constexpr const Joint &current_joint(size_t idx) const {
+    assert(joint_count() > 0 &&
+           "KinematicChain::current_joint_type - Empty Chain");
+    assert(idx < joint_count() &&
+           "KinematicChain::current_joint_type - Out of Bound Access");
+    return chain_[idx];
+  }
+
   SE3 forward_kinematics(std::span<const double> q_vals) const {
     return compute_frames(q_vals).end_effector;
   }

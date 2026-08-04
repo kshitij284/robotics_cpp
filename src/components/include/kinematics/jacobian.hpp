@@ -39,6 +39,8 @@ public:
   constexpr bool operator==(const Jacobian &other) const {
     return em == other.em;
   }
+
+  constexpr const Eigen::MatrixXd &matrix() const { return em; }
 };
 
 } // namespace kinematics::math
