@@ -9,9 +9,11 @@ protected:
   SE3 se3_default{};
   SE3 identity = SE3::identity();
   Quaternion quat_90x = Quaternion::from_axis_angle(Vec3{1, 0, 0}, kPi / 2);
+  Quaternion quat_45z = Quaternion::from_axis_angle(Vec3{0, 0, 1}, kPi / 4);
   Mat3 mat_identity = Mat3::identity();
   Mat3 mat_90x = Mat3::m90x();
   Mat3 mat_90z = Mat3::m90z();
+  Mat3 mat_90x_45z = (quat_45z.to_rotation_matrix()) * mat_90x;
   Mat3 mat_180x{1.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, -1.0};
   Vec3 vec_zero{0.0, 0.0, 0.0};
   Vec3 vec_tran_1x{1.0, 0.0, 0.0};
@@ -51,6 +53,16 @@ TEST_F(SE3Test, FromQuaternionTranslation_StoresCorrectValues) {
   SE3 se3_q90x_t1x = SE3::from_quaternion_translation(quat_90x, vec_tran_1x);
   EXPECT_EQ(se3_q90x_t1x.rotation(), mat_90x);
   EXPECT_EQ(se3_q90x_t1x.translation(), vec_tran_1x);
+}
+
+TEST_F(SE3Test, FromRPY_XYX_StoresCorrectValues) {
+  SE3 se3_roll90 = SE3::from_rpy_xyz(kPi / 2, 0.0, 0.0, vec_zero);
+  EXPECT_EQ(se3_roll90.rotation(), mat_90x);
+  EXPECT_EQ(se3_roll90.translation(), vec_zero);
+
+  SE3 se3_roll90_yaw45 = SE3::from_rpy_xyz(kPi / 2, 0.0, kPi / 4, vec_tran_1x);
+  EXPECT_EQ(se3_roll90_yaw45.rotation(), mat_90x_45z);
+  EXPECT_EQ(se3_roll90_yaw45.translation(), vec_tran_1x);
 }
 
 TEST_F(SE3Test, Multiply_ReturnsCompose) {

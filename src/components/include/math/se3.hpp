@@ -24,7 +24,6 @@ public:
   constexpr SE3 &operator=(const SE3 &other) = default;
   constexpr SE3(SE3 &&other) noexcept = default;
   constexpr SE3 &operator=(SE3 &&other) noexcept = default;
-
   constexpr const Mat3 &rotation() const noexcept { return R_; }
 
   constexpr const Vec3 &translation() const noexcept { return t_; }
@@ -38,6 +37,16 @@ public:
   constexpr static SE3 from_quaternion_translation(const Quaternion &q,
                                                    const Vec3 &t) {
     Mat3 mat = q.to_rotation_matrix();
+    return SE3(mat, t);
+  }
+
+  constexpr static SE3 from_rpy_xyz(const double roll, const double pitch,
+                                    const double yaw, const Vec3 &t) {
+    Quaternion qx_roll = Quaternion::from_axis_angle({1.0, 0.0, 0.0}, roll);
+    Quaternion qy_pitch = Quaternion::from_axis_angle({0.0, 1.0, 0.0}, pitch);
+    Quaternion qz_yaw = Quaternion::from_axis_angle({0.0, 0.0, 1.0}, yaw);
+
+    Mat3 mat = (qz_yaw * (qy_pitch * qx_roll)).to_rotation_matrix();
     return SE3(mat, t);
   }
 
