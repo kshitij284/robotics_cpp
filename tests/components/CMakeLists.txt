@@ -6,6 +6,8 @@ add_executable(test_components
 	kinematics_test/test_joint.cpp
 	kinematics_test/test_chain.cpp
 	kinematics_test/test_jacobian.cpp
+	kinematics_test/test_iksolver.cpp
+	
 )
 
 target_link_libraries(test_components
