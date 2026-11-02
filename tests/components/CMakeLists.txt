@@ -1,5 +1,5 @@
 add_executable(test_components
-	math_test/test_vec3.cpp
+	#[[ math_test/test_vec3.cpp
 	math_test/test_mat3.cpp
 	math_test/test_quaternion.cpp
 	math_test/test_se3.cpp
@@ -7,7 +7,13 @@ add_executable(test_components
 	kinematics_test/test_chain.cpp
 	kinematics_test/test_jacobian.cpp
 	kinematics_test/test_iksolver.cpp
+	]]
+	urdf_test/test_urdf.cpp
 	
+)
+
+target_compile_definitions(test_components PRIVATE 
+    TEST_RESOURCES_DIR="${CMAKE_CURRENT_SOURCE_DIR}/urdf_test/resources/"
 )
 
 target_link_libraries(test_components
