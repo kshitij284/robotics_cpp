@@ -14,7 +14,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y g++-14 cmake ninja-build
       - name: Configure
         env: { CC: gcc-14, CXX: g++-14 }
-        run: cmake -B build -G Ninja
+        run: cmake -B build -G Ninja -DENABLE_WERROR=ON
       - name: Build
         run: cmake --build build --parallel
       - name: Test
