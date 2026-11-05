@@ -15,7 +15,8 @@ public:
   double z = 0.0;
 
   constexpr Vec3() = default;
-  constexpr Vec3(double x, double y, double z) : x(x), y(y), z(z) {}
+  constexpr Vec3(double x_in, double y_in, double z_in)
+      : x(x_in), y(y_in), z(z_in) {}
   constexpr Vec3(const Vec3 &other) = default;
   constexpr Vec3 &operator=(const Vec3 &other) = default;
   constexpr Vec3(Vec3 &&other) noexcept = default;

@@ -51,6 +51,10 @@ public:
   constexpr KinematicChain &
   operator=(KinematicChain &&other) noexcept = default;
 
+  constexpr bool operator==(const KinematicChain &other) const noexcept {
+    return (chain_ == other.chain_);
+  }
+
   [[nodiscard]] constexpr size_t joint_count() const noexcept {
     return chain_.size();
   }

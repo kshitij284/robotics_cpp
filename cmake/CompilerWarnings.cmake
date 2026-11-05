@@ -1,3 +1,5 @@
+option(ENABLE_WERROR "Treat warnings as errors" OFF)
+
 function(target_set_warnings target access)
     set(CLANG_WARNINGS
         -Wall -Wextra -Wpedantic
@@ -21,6 +23,11 @@ function(target_set_warnings target access)
         -Wlogical-op
         -Wnull-dereference
     )
+
+    if(ENABLE_WERROR)
+        list(APPEND CLANG_WARNINGS -Werror)
+        list(APPEND GCC_WARNINGS -Werror)
+    endif()
 
     if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         target_compile_options(${target} ${access} ${CLANG_WARNINGS})

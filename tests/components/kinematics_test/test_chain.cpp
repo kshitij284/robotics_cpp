@@ -69,6 +69,11 @@ TEST_F(KinematicChainTest, DofCount_ReturnCorrectValues) {
   EXPECT_EQ(prismatic_chain.dof_count(), 3);
 }
 
+TEST_F(KinematicChainTest, Equal_ReturnTrueForEqual) {
+  EXPECT_EQ(prismatic_chain, prismatic_chain);
+  EXPECT_NE(default_chain, revolute_chain);
+}
+
 TEST_F(KinematicChainTest, DefaultInitialization_StoresCorrectValues) {
   EXPECT_EQ(default_chain.joint_count(), 0);
   EXPECT_EQ(default_chain.dof_count(), 0);

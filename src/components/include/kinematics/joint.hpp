@@ -17,11 +17,20 @@ struct Revolute {
   Revolute(Vec3 axis_in) : axis(axis_in) {
     assert(axis.is_unit() && "Revolute: Axis must be unit vector");
   }
+
+  constexpr bool operator==(const Revolute &other) const noexcept {
+    return axis == other.axis;
+  }
 };
 struct Prismatic {
   Vec3 axis;
+  constexpr bool operator==(const Prismatic &other) const noexcept {
+    return axis == other.axis;
+  }
 };
-struct Fixed {};
+struct Fixed {
+  constexpr bool operator==(const Fixed &) const noexcept { return true; }
+};
 
 using JointType = std::variant<Revolute, Prismatic, Fixed>;
 
@@ -30,8 +39,8 @@ private:
   std::string name_ = "joint";
   JointType type_ = Fixed{};
   SE3 rest_transform_ = SE3::identity();
-  // default limits are 0.0, 0.0. Callers constructing Revolute/Prismatic must
-  // provide explicit limits
+  // default limits are 0.0, 0.0. Callers constructing Revolute/Prismatic
+  // must provide explicit limits
   double min_q_ = 0.0;
   double max_q_ = 0.0;
 
@@ -46,6 +55,12 @@ public:
   constexpr Joint &operator=(const Joint &other) = default;
   constexpr Joint(Joint &&other) noexcept = default;
   constexpr Joint &operator=(Joint &&other) noexcept = default;
+
+  constexpr bool operator==(const Joint &other) const noexcept {
+    return ((name_ == other.name_) && (type_ == other.type_) &&
+            (rest_transform_ == other.rest_transform_) &&
+            (min_q_ == other.min_q_) && (max_q_ == other.max_q_));
+  }
 
   [[nodiscard]] constexpr const std::string &name() const noexcept {
     return name_;

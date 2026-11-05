@@ -14,11 +14,11 @@ private:
 public:
   Jacobian() = default;
   Jacobian(std::size_t chain_dof) : em(6, chain_dof) {}
-  constexpr Jacobian(const Jacobian &other) = default;
-  constexpr Jacobian &operator=(const Jacobian &other) = default;
-  constexpr Jacobian(Jacobian &&other) = default;
-  constexpr Jacobian &operator=(Jacobian &&other) = default;
-  constexpr ~Jacobian() = default;
+  Jacobian(const Jacobian &other) = default;
+  Jacobian &operator=(const Jacobian &other) = default;
+  Jacobian(Jacobian &&other) = default;
+  Jacobian &operator=(Jacobian &&other) = default;
+  ~Jacobian() = default;
 
   constexpr double operator[](long r, long c) const {
     assert(r < em.rows() && c < em.cols() &&

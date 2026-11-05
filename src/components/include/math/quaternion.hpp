@@ -16,8 +16,8 @@ public:
   double z = 0.0;
 
   constexpr Quaternion() = default;
-  constexpr Quaternion(double w, double x, double y, double z)
-      : w(w), x(x), y(y), z(z) {}
+  constexpr Quaternion(double w_in, double x_in, double y_in, double z_in)
+      : w(w_in), x(x_in), y(y_in), z(z_in) {}
   constexpr Quaternion(const Quaternion &other) = default;
   constexpr Quaternion &operator=(const Quaternion &other) = default;
   constexpr Quaternion(Quaternion &&other) noexcept = default;

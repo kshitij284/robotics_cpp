@@ -263,13 +263,13 @@ TEST_F(QuaternionTest, ToRotationMatrix_DeterminantIsOne) {
 }
 
 TEST_F(QuaternionTest, FromMatrix_Identity_ReturnsUnitQuaternion) {
-  Quaternion test = Quaternion::from_matrix(identity_mat);
-  EXPECT_EQ(test, identity);
+  Quaternion identity_from_mat = Quaternion::from_matrix(identity_mat);
+  EXPECT_EQ(identity_from_mat, identity);
 };
 
 TEST_F(QuaternionTest, FromMatrix_RoundTrip_RepresentSameRotation) {
-  Quaternion test = Quaternion::from_matrix(identity_mat);
-  Mat3 test_mat = test.to_rotation_matrix();
+  Quaternion identity_from_mat = Quaternion::from_matrix(identity_mat);
+  Mat3 test_mat = identity_from_mat.to_rotation_matrix();
   EXPECT_EQ(identity_mat, test_mat);
 }
 
