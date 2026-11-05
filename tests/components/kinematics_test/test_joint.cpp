@@ -58,6 +58,12 @@ TEST_F(JointTest, ParameterizedInitialization) {
   EXPECT_DOUBLE_EQ(revolute_joint.max_q(), kPi);
 }
 
+TEST_F(JointTest, Equal_ReturnTrueForEqual) {
+  EXPECT_EQ(prismatic_joint, prismatic_joint);
+  EXPECT_NE(prismatic_joint, revolute_joint);
+  EXPECT_NE(revolute_joint, revolute_joint_no_rt);
+}
+
 TEST_F(JointTest, Transform_Fixed_qAnyValue_ReturnsSelf) {
   EXPECT_EQ(joint_default.transform(0.5), joint_default.rest_transform());
   EXPECT_EQ(joint_default.transform(-1235325.0),
