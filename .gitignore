@@ -2,4 +2,5 @@
 /build-san
 /build-debug
 /build-werror
+/build-gcc
 .DS_Store
