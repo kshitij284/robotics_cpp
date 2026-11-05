@@ -55,7 +55,7 @@ TEST_F(SE3Test, FromQuaternionTranslation_StoresCorrectValues) {
   EXPECT_EQ(se3_q90x_t1x.translation(), vec_tran_1x);
 }
 
-TEST_F(SE3Test, FromRPY_XYX_StoresCorrectValues) {
+TEST_F(SE3Test, FromRPY_XYZ_StoresCorrectValues) {
   SE3 se3_roll90 = SE3::from_rpy_xyz(kPi / 2, 0.0, 0.0, vec_zero);
   EXPECT_EQ(se3_roll90.rotation(), mat_90x);
   EXPECT_EQ(se3_roll90.translation(), vec_zero);
@@ -63,6 +63,15 @@ TEST_F(SE3Test, FromRPY_XYX_StoresCorrectValues) {
   SE3 se3_roll90_yaw45 = SE3::from_rpy_xyz(kPi / 2, 0.0, kPi / 4, vec_tran_1x);
   EXPECT_EQ(se3_roll90_yaw45.rotation(), mat_90x_45z);
   EXPECT_EQ(se3_roll90_yaw45.translation(), vec_tran_1x);
+}
+
+TEST_F(SE3Test, FromRPY_XYZ_MatchesScipyReference) {
+  SE3 computed_se3 = SE3::from_rpy_xyz(0.1, 0.2, 0.3, Vec3(0.0, 0.0, 0.0));
+  Mat3 computed = computed_se3.rotation();
+  Mat3 reference(0.936293363584199, -0.275095847318244, 0.218350663146334,
+                 0.289629477625516, 0.956425085849232, -0.036957013524625,
+                 -0.198669330795061, 0.097843395007256, 0.975170327201816);
+  EXPECT_EQ(computed, reference);
 }
 
 TEST_F(SE3Test, Multiply_ReturnsCompose) {

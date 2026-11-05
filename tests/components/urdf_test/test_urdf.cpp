@@ -30,7 +30,7 @@ TEST_F(UrdfParserTest, DefaultParsedJoint_ComposesCorrectly) {
   EXPECT_DOUBLE_EQ(default_joint.limit_upper, 0.0);
 }
 
-TEST_F(UrdfParserTest, ParsedFromURDF_SingleJoint_CorrectInitialization) {
+TEST_F(UrdfParserTest, ParsedFromURDF_SingleJoint_CorrectInitialized) {
   std::string urdf_path =
       std::string(TEST_RESOURCES_DIR) + "test_one_joint.urdf";
   auto parsed_joints = parse_urdf_joints(urdf_path);
@@ -52,7 +52,7 @@ TEST_F(UrdfParserTest, ParsedFromURDF_SingleJoint_CorrectInitialization) {
   }
 }
 
-TEST_F(UrdfParserTest, ParsedFromURDF_MultipleJoint_CorrectInitialization) {
+TEST_F(UrdfParserTest, ParsedFromURDF_MultipleJoint_CorrectInitialized) {
   ParsedJoint j1{.name = "link_1_joint",
                  .type = "revolute",
                  .parent = "base_link",
@@ -167,4 +167,111 @@ TEST_F(UrdfParserTest, UrdfImport_InvalidXml_ReturnInvalidXmlError) {
   auto parsed_invalid_exp = parse_urdf_joints(urdf_path_invalid);
   ASSERT_FALSE(parsed_invalid_exp.has_value());
   EXPECT_EQ(parsed_invalid_exp.error(), UrdfError::InvalidXml);
+}
+
+TEST_F(UrdfParserTest, BuildKinematicChain_SingleJoint_BuiltCorrectly) {
+  std::string urdf_path_joint =
+      std::string(TEST_RESOURCES_DIR) + "test_one_rev_joint.urdf";
+  auto parsed_joint_exp = parse_urdf_joints(urdf_path_joint);
+  ASSERT_TRUE(parsed_joint_exp.has_value());
+  const auto &parsed_one_joint = *parsed_joint_exp;
+
+  auto built_chain_exp = build_chain(parsed_one_joint);
+  ASSERT_TRUE(built_chain_exp.has_value());
+  const auto &built_chain = *built_chain_exp;
+
+  std::string name = "base_joint";
+  JointType type = Revolute(Vec3(0.0, 1.0, 0.0));
+  SE3 rest_transform = SE3::from_rpy_xyz(0.0, 0.0, 0.0, Vec3(0.0, 0.0, 0.5));
+  double min = -1.57;
+  double max = 1.57;
+
+  KinematicChain base(
+      std::vector<Joint>{Joint(name, type, rest_transform, min, max)});
+
+  EXPECT_EQ(base, built_chain);
+}
+
+TEST_F(UrdfParserTest,
+       BuildKinematicChain_SingleJointContinuous_BuiltCorrectly) {
+  std::string urdf_path_joint =
+      std::string(TEST_RESOURCES_DIR) + "test_one_joint.urdf";
+  auto parsed_joint_exp = parse_urdf_joints(urdf_path_joint);
+  ASSERT_TRUE(parsed_joint_exp.has_value());
+  const auto &parsed_one_joint = *parsed_joint_exp;
+
+  auto built_chain_exp = build_chain(parsed_one_joint);
+  ASSERT_TRUE(built_chain_exp.has_value());
+  const auto &built_chain = *built_chain_exp;
+
+  std::string name = "base_joint";
+  JointType type = Revolute(Vec3(0.0, 1.0, 0.0));
+  SE3 rest_transform = SE3::from_rpy_xyz(0.0, 0.0, 0.0, Vec3(0.0, 0.0, 0.5));
+  double min = -kinematics::math::kPi;
+  double max = kinematics::math::kPi;
+
+  KinematicChain base(
+      std::vector<Joint>{Joint(name, type, rest_transform, min, max)});
+
+  EXPECT_EQ(base, built_chain);
+}
+
+TEST_F(UrdfParserTest, BuildKinematicChain_NonUnitRPY_BuiltCorrectly) {
+  std::string urdf_path_joint =
+      std::string(TEST_RESOURCES_DIR) + "test_one_joint_rpy.urdf";
+  auto parsed_joint_exp = parse_urdf_joints(urdf_path_joint);
+  ASSERT_TRUE(parsed_joint_exp.has_value());
+  const auto &parsed_one_joint = *parsed_joint_exp;
+
+  auto built_chain_exp = build_chain(parsed_one_joint);
+  ASSERT_TRUE(built_chain_exp.has_value());
+  const auto &built_chain = *built_chain_exp;
+
+  std::string name = "base_joint";
+  JointType type = Revolute(Vec3(0.0, 1.0, 0.0));
+  SE3 rest_transform = SE3::from_rpy_xyz(0.0, 0.0, 1.5708, Vec3(0.0, 0.0, 0.5));
+  double min = -kinematics::math::kPi;
+  double max = kinematics::math::kPi;
+
+  KinematicChain base(
+      std::vector<Joint>{Joint(name, type, rest_transform, min, max)});
+
+  EXPECT_EQ(base, built_chain);
+}
+
+TEST_F(UrdfParserTest, BuildKinematicChain_MultiJoint_BuiltCorrectly) {
+  std::string urdf_path_multi_joint =
+      std::string(TEST_RESOURCES_DIR) + "test_three_joints.urdf";
+  auto parsed_multi_joint_exp = parse_urdf_joints(urdf_path_multi_joint);
+  ASSERT_TRUE(parsed_multi_joint_exp.has_value());
+  const auto &parsed_multi_joint = *parsed_multi_joint_exp;
+
+  auto built_chain_exp = build_chain(parsed_multi_joint);
+  ASSERT_TRUE(built_chain_exp.has_value());
+  const auto &built_chain = *built_chain_exp;
+
+  std::string name1 = "link_1_joint";
+  JointType type1 = Revolute(Vec3(0.0, 0.0, 1.0));
+  SE3 rest_transform1 = SE3::from_rpy_xyz(0.0, 0.0, 0.0, Vec3(0.0, 0.0, 0.05));
+  double min1 = -1.57;
+  double max1 = 1.57;
+
+  std::string name2 = "link_2_joint";
+  JointType type2 = Revolute(Vec3(0.0, 1.0, 0.0));
+  SE3 rest_transform2 = SE3::from_rpy_xyz(0.0, 0.0, 0.0, Vec3(0.0, 0.0, 0.05));
+  double min2 = -1.57;
+  double max2 = 1.57;
+
+  std::string name3 = "link_3_joint";
+  JointType type3 = Revolute(Vec3(0.0, 1.0, 0.0));
+  SE3 rest_transform3 = SE3::from_rpy_xyz(0.0, 0.0, 0.0, Vec3(0.0, 0.0, 0.5));
+  double min3 = -1.57;
+  double max3 = 1.57;
+
+  KinematicChain base(
+      std::vector<Joint>{Joint(name1, type1, rest_transform1, min1, max1),
+                         Joint(name2, type2, rest_transform2, min2, max2),
+                         Joint(name3, type3, rest_transform3, min3, max3)});
+
+  EXPECT_EQ(base, built_chain);
 }

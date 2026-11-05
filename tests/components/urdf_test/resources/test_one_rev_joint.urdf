@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<robot name="test">
+    <link name="base_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+        </visual>
+    </link>
+
+    <link name="link_1">
+        <visual>
+	    <origin xyz="1 1 1" rpy="1 1 1"/>
+        </visual>
+    </link>
+
+    <joint name="base_joint" type="revolute">
+        <parent link="base_link"/>
+        <child link="link_1"/>
+        <origin xyz="0 0 0.5"/>
+        <axis xyz="0 1 0"/>
+        <limit lower="-1.57" upper="1.57" effort="10" velocity="1"/>
+    </joint>
+</robot>

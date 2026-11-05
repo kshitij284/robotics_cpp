@@ -1,3 +1,6 @@
+#include "kinematics/chain.hpp"
+#include "kinematics/joint.hpp"
+#include "math/se3.hpp"
 #include <sstream>
 #include <tinyxml2.h>
 #include <unordered_map>
@@ -157,5 +160,53 @@ parse_urdf_joints(const std::string &urdf_file_path) {
     return std::unexpected(UrdfError::DisconnectedGraph);
 
   return joint_vector;
+}
+
+std::expected<KinematicChain, UrdfError>
+build_chain(const std::vector<ParsedJoint> &parsed_joints) {
+
+  int chain_length = parsed_joints.size();
+  std::vector<Joint> chain;
+  chain.reserve(chain_length);
+
+  std::string name;
+  SE3 rest_transform;
+  double min, max;
+
+  for (const auto &p_joint : parsed_joints) {
+
+    name = p_joint.name;
+
+    Vec3 axis{p_joint.axis[0], p_joint.axis[1], p_joint.axis[2]};
+    Vec3 axis_unit = axis.normalize();
+
+    if (p_joint.type != "revolute" && p_joint.type != "continuous" &&
+        p_joint.type != "prismatic" && p_joint.type != "fixed")
+      return std::unexpected(UrdfError::InvalidXml);
+
+    min = p_joint.limit_lower;
+    max = p_joint.limit_upper;
+
+    JointType type = [&]() -> JointType {
+      if (p_joint.type == "revolute")
+        return Revolute(axis_unit);
+      if (p_joint.type == "continuous") {
+        min = -(kinematics::math::kPi);
+        max = kinematics::math::kPi;
+        return Revolute(axis_unit);
+      }
+      if (p_joint.type == "prismatic")
+        return Prismatic(axis_unit);
+      else
+        return Fixed();
+    }();
+
+    rest_transform = SE3::from_rpy_xyz(
+        p_joint.origin_roll, p_joint.origin_pitch, p_joint.origin_yaw,
+        Vec3(p_joint.origin_x, p_joint.origin_y, p_joint.origin_z));
+
+    chain.push_back(Joint(name, type, rest_transform, min, max));
+  }
+  return KinematicChain(chain);
 }
 } // namespace robotics::urdf

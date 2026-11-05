@@ -1,10 +1,20 @@
 #pragma once
 
+#include "kinematics/chain.hpp"
 #include <expected>
 #include <string>
 #include <vector>
 
 namespace robotics::urdf {
+
+using kinematics::math::Fixed;
+using kinematics::math::Joint;
+using kinematics::math::JointType;
+using kinematics::math::KinematicChain;
+using kinematics::math::Prismatic;
+using kinematics::math::Revolute;
+using kinematics::math::SE3;
+using kinematics::math::Vec3;
 
 enum class UrdfError {
   FileNotFound,
@@ -32,5 +42,8 @@ struct ParsedJoint {
 
 [[nodiscard]] std::expected<std::vector<ParsedJoint>, UrdfError>
 parse_urdf_joints(const std::string &urdf_file_path);
+
+[[nodiscard]] std::expected<KinematicChain, UrdfError>
+build_chain(const std::vector<ParsedJoint> &parsed_joints);
 
 } // namespace robotics::urdf
