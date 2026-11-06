@@ -17,16 +17,13 @@ include(FetchContent)
 set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
 
 # Eigen: header only
-FetchContent_Declare(
-  Eigen
+FetchContent_Declare(Eigen
   GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
   GIT_TAG 3.4.0
   GIT_SHALLOW TRUE
-)
-FetchContent_GetProperties(Eigen)
-if(NOT eigen_POPULATED)
-	FetchContent_MakeAvailable(Eigen)
-endif()
+  SOURCE_SUBDIR do-not-build)       
+FetchContent_MakeAvailable(Eigen)
+
 add_library(eigen_headers INTERFACE)
 target_include_directories(eigen_headers SYSTEM INTERFACE ${eigen_SOURCE_DIR})
 
