@@ -3,4 +3,5 @@
 /build-debug
 /build-werror
 /build-gcc
+/build-vs
 .DS_Store

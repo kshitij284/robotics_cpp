@@ -14,6 +14,7 @@ protected:
   SE3 rest_transform_rot90x_tran5y;
   Joint fixed_joint;
   Joint revolute_joint;
+  Joint revolute_joint_limit_near_pi;
   Joint revo_planar_joint;
   Joint prismatic_joint;
   std::vector<Joint> vec_fix_joint;
@@ -21,11 +22,13 @@ protected:
   std::vector<Joint> vec_rev_planar;
   std::vector<Joint> vec_pris_joint;
   std::vector<Joint> vec_mixed_joint;
+  std::vector<Joint> vec_mixed_joint_rev_near_pi;
   KinematicChain fixed_chain;
   KinematicChain revolute_chain;
   KinematicChain revo_planar_chain;
   KinematicChain prismatic_chain;
   KinematicChain mixed_chain;
+  KinematicChain mixed_chain_near_pi;
 
   KinematicChainTest()
       : axis_x(Vec3{1.0, 0.0, 0.0}), axis_y(Vec3{0.0, 1.0, 0.0}),
@@ -36,6 +39,8 @@ protected:
                     0.0),
         revolute_joint("joint_rev", Revolute{axis_z},
                        rest_transform_rot90x_tran5y, -kPi, kPi),
+        revolute_joint_limit_near_pi("joint_rev", Revolute{axis_z},
+                                     rest_transform_rot90x_tran5y, -1.57, 1.57),
         revo_planar_joint("joint_rev_planar", Revolute{axis_z},
                           rest_transform_planar, -kPi, kPi),
         prismatic_joint("joint_prismatic", Prismatic{axis_z},
@@ -50,9 +55,12 @@ protected:
                                           prismatic_joint}),
         vec_mixed_joint(
             std::vector<Joint>{revolute_joint, fixed_joint, prismatic_joint}),
+        vec_mixed_joint_rev_near_pi(std::vector<Joint>{
+            revolute_joint_limit_near_pi, fixed_joint, prismatic_joint}),
         fixed_chain(vec_fix_joint), revolute_chain(vec_rev_joint),
         revo_planar_chain(vec_rev_planar), prismatic_chain(vec_pris_joint),
-        mixed_chain(vec_mixed_joint) {}
+        mixed_chain(vec_mixed_joint),
+        mixed_chain_near_pi(vec_mixed_joint_rev_near_pi) {}
 };
 
 TEST_F(KinematicChainTest, JointCount_ReturnCorrectValues) {
@@ -137,6 +145,16 @@ TEST_F(KinematicChainTest, ForwardKinematics_MixedJoints_ValuesCorrectlyApply) {
       (Quaternion::from_axis_angle(axis_z, -kPi / 2).to_rotation_matrix());
   EXPECT_EQ(mixed_chain.forward_kinematics(std::vector<double>{kPi / 2, 2.0}),
             SE3(result_mixed, Vec3{-5.0, 2.0, 0.0}));
+}
+
+TEST_F(KinematicChainTest, ForwardKinematics_MixedJoints_BeyondJointLimits) {
+  // FK must not clamp silently, it belongs above it
+  Mat3 result_mixed_at_pi =
+      (Quaternion::from_axis_angle(axis_x, -kPi / 2).to_rotation_matrix()) *
+      (Quaternion::from_axis_angle(axis_z, -kPi / 2).to_rotation_matrix());
+  EXPECT_EQ(
+      mixed_chain_near_pi.forward_kinematics(std::vector<double>{kPi / 2, 2.0}),
+      SE3(result_mixed_at_pi, Vec3{-5.0, 2.0, 0.0}));
 }
 
 TEST_F(KinematicChainTest,
