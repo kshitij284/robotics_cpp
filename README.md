@@ -1,7 +1,7 @@
 # `robotics_cpp`
 **A from-scratch C++23 robot kinematics library — FK/IK built on hand-rolled SE(3) math, cross-validated against ROS.**
 [![CI](https://github.com/kshitij284/robotics_cpp/actions/workflows/ci.yml/badge.svg)](https://github.com/kshitij284/robotics_cpp/actions/workflows/ci.yml)
-![C++](https://img.shields.io/badge/C%2B%2B-17-blue)
+![C++](https://img.shields.io/badge/C%2B%2B-23-blue)
 ---
 
 ## The Library
