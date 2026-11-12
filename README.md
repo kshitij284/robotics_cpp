@@ -92,7 +92,7 @@ ctest --test-dir build --output-on-failure
 include(FetchContent)
 FetchContent_Declare(
   robotics_cpp
-  GIT_REPOSITORY https://github.com/<your-username>/robotics_cpp.git
+  GIT_REPOSITORY https://github.com/kshitij284/robotics_cpp.git
   GIT_TAG        main
 )
 FetchContent_MakeAvailable(robotics_cpp)
